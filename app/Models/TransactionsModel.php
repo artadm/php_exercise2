@@ -10,14 +10,12 @@ class TransactionsModel extends Model
 {
 use MultipleSqlQueryTrait;
 	
-
-	private array $transactions;
 	public function create(array $transactionsArray) 
 	{
-		$newTransactionsStmt = $this->db->prepare(
-		'INSERT INTO transactions (transitioned_at, check_number, transaction_desc, amount)
-				VALUES' . MultipleSqlQueryTrait::transactionsMultipleQuery($transactionsArray));
-		$newTransactionsStmt->execute();
+		$newTransactionsStmt = 
+		'INSERT INTO transactions (transitioned_at, check_number, transaction_desc, amount) 
+				VALUES';
+		MultipleSqlQueryTrait::executeMultipleTransactions($transactionsArray, $newTransactionsStmt, $this->db);
 	}
 
 	public function getTransactions(): array
@@ -25,8 +23,7 @@ use MultipleSqlQueryTrait;
 		$newTransactionsStmt = $this->db->prepare(
 			'SELECT * FROM transactions');
 			$newTransactionsStmt->execute();
-			$this->transactions = $newTransactionsStmt->fetchAll(PDO::FETCH_ASSOC);
-		return $this->transactions;
+			return $newTransactionsStmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	
